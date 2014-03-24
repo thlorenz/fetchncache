@@ -1,7 +1,8 @@
 'use strict';
 
-var redis = require('redis')
-  , xtend = require('xtend')
+var redis      = require('redis')
+  , xtend      = require('xtend')
+  , hyperquest = require('hyperquest')
   ;
 
 module.exports = FetchAndCache;
@@ -10,11 +11,12 @@ function FetchAndCache(opts) {
   if (!(this instanceof FetchAndCache)) return new FetchAndCache(opts);
 
   var redisOpts = xtend({ port: 6379, host: '127.0.0.1' }, opts.redis)
-    , serverOpts = xtend({ port: 3000, host: '127.0.0.1' }, opts.server)
+    , serviceOpts = xtend({ url: 'http://127.0.0.1' }, opts.service)
 
-  this._defaultExpire = opts.defaultExpire || 15 * 60;
-  this._serverOpts     = serverOpts;
-  this._client         = redis.createClient(redisOpts.port, redisOpts.host, redisOpts)
+  this._defaultExpire = opts.defaultExpire || 15 * 60
+  this._serviceOpts   = serviceOpts;
+  this._markCached    = opts.markCached !== false;
+  this._client        = redis.createClient(redisOpts.port, redisOpts.host, redisOpts)
 }
 
 var proto = FetchAndCache.prototype;
@@ -27,11 +29,11 @@ proto.fetch = function (uri, opts, cb) {
     cb = opts;
     opts = null;
   }
-  opts = xtend({ expire: self.defaultExpire, transform: function (x) { return x } }, opts);
+  opts = xtend({ expire: self._defaultExpire, transform: function (x) { return x } }, opts);
 
   self._client.get(uri, function (err, res) {
     if (err) return cb(err);
-    if (res) return cb(null, res);  
+    if (res) return cb(null, res, true);  
 
     self._get(uri, function (err, res) {
       if (err) return cb(err);
@@ -41,6 +43,7 @@ proto.fetch = function (uri, opts, cb) {
 }
 
 proto.stop = function (force) {
+  if (!this._client) throw new Error('fetchncache was stopped previously and cannot be stopped again');
   if (force) this._client.end(); else this._client.unref();  
   this._client = null;
 }
@@ -54,9 +57,20 @@ proto.monitor = function (monitorfn, cb) {
   })
 }
 
+proto.clearCache = function () {
+  this._client.flushdb();
+  return this;
+}
+
 proto._get = function (uri, cb) {
-  // TODO: get from server
-  cb(null, { "server": "result" });
+  var body = '';
+  var url =  this._serviceOpts.url + uri;
+  console.log('url', url);
+  hyperquest
+    .get(url)
+    .on('error', cb)
+    .on('data', function (d) { body += d.toString() })
+    .on('end', function () { cb(null, body) })
 }
 
 proto._cache = function (uri, res, opts, cb) {
@@ -68,7 +82,8 @@ proto._cache = function (uri, res, opts, cb) {
     return cb(e);
   }
 
-  self._client.hmset(uri, val, function (err) {
+  // assuming that value is now a string we use set to add it
+  self._client.set(uri, val, function (err) {
     if (err) return cb(err);
 
     self._client.expire(uri, opts.expire, function (err) {
@@ -76,18 +91,4 @@ proto._cache = function (uri, res, opts, cb) {
       cb(null, val);  
     })
   });
-}
-// Test
-if (!module.parent && typeof window === 'undefined') {
-  
-  var fnc = module.exports({ 
-      redis: { port: 6379  , host : '33.33.33.100' }
-    , server: { port: 3002 , host: '127.0.0.1' }
-  });
-  fnc.fetch('my/uri', function (err, val) {
-    if (err) return console.error(err);
-    console.log(val);  
-    fnc.stop();
-  })
-
 }
