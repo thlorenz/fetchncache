@@ -44,7 +44,7 @@ proto.fetch = function (uri, opts, cb) {
 
 proto.stop = function (force) {
   if (!this._client) throw new Error('fetchncache was stopped previously and cannot be stopped again');
-  if (force) this._client.end(); else this._client.unref();  
+  if (force || typeof this._client.unref !== 'function') this._client.end(); else this._client.unref();  
   this._client = null;
 }
 
