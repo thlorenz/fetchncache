@@ -1,6 +1,6 @@
 {
   "name": "fetchncache",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Fetches a resource from a server and stores it inside a redis cache and the next time it grabs it from there",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,15 @@
     "redis-commander": "~0.2.1",
     "nock": "~0.27.2"
   },
-  "keywords": [ "redis", "cache", "service", "resource", "store", "expire", "proxy" ],
+  "keywords": [
+    "redis",
+    "cache",
+    "service",
+    "resource",
+    "store",
+    "expire",
+    "proxy"
+  ],
   "author": {
     "name": "Thorsten Lorenz",
     "email": "thlorenz@gmx.de",
