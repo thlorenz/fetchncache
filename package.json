@@ -1,6 +1,6 @@
 {
   "name": "fetchncache",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Fetches a resource from a server and stores it inside a redis cache and the next time it grabs it from there",
   "main": "index.js",
   "scripts": {
