@@ -4,7 +4,7 @@
   "description": "Fetches a resource from a server and stores it inside a redis cache so the next time it grabs it from there",
   "main": "index.js",
   "scripts": {
-    "test": "tap test/*.js",
+    "test": "echo 'The tests require to have a redis running on REDIS_HOST:6379' && tap test/*.js",
     "commander": "redis-commander --redis-port 6379 --redis-host 33.33.33.100 --port 3000",
     "tunnel": "lt --port 3000"
   },
