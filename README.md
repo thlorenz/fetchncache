@@ -1,6 +1,6 @@
 # fetchncache [![build status](https://secure.travis-ci.org/thlorenz/fetchncache.png)](http://travis-ci.org/thlorenz/fetchncache)
 
-Fetches a resource from a server and stores it inside a redis cache so the next time it grabs it from there
+Fetches a resource from a server and stores it inside a redis cache and the next time it grabs it from there
 
 ```js
 var fetchncache = require('../')
