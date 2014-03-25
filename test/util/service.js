@@ -5,7 +5,7 @@ var nock = require('nock')
 
 var go = module.exports = 
 
-function (url, resources) {
+function (url, resources, times) {
   var server = nock(url)
     .defaultReplyHeaders({
       'Content-Type': 'application/json'
@@ -14,9 +14,9 @@ function (url, resources) {
   Object.keys(resources)
     .forEach(function (k) {
       var val = resources[k];
-      server
-        .get(k)
-        .reply(200, val)
+      var get = server.get(k)
+      if (times) get = get.times(times);
+      get.reply(200, val)
     })
 
   return nock;
