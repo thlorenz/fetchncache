@@ -2,7 +2,6 @@
 /*jshint asi: true */
 
 var test        = require('tap').test
-  , http        = require('http')
   , fetchncache = require('../')
   , service      = require('./util/service')
   , url         = 'http://all.our.resources.com'
