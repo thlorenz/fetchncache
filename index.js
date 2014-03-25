@@ -13,6 +13,9 @@ function FetchAndCache(opts) {
   var redisOpts = xtend({ port: 6379, host: '127.0.0.1' }, opts.redis)
     , serviceOpts = xtend({ url: 'http://127.0.0.1' }, opts.service)
 
+  // node 0.8 has problems with hiredis
+  if (/^v0\.8/.test(process.version)) redisOpts.parser = redisOpts.parser || 'javascript';
+
   this._defaultExpire = opts.defaultExpire || 15 * 60
   this._serviceOpts   = serviceOpts;
   this._markCached    = opts.markCached !== false;
@@ -44,7 +47,7 @@ proto.fetch = function (uri, opts, cb) {
 
 proto.stop = function (force) {
   if (!this._client) throw new Error('fetchncache was stopped previously and cannot be stopped again');
-  if (force || typeof this._client.unref !== 'function') this._client.end(); else this._client.unref();  
+  if (force) this._client.end(); else this._client.unref();  
   this._client = null;
 }
 
