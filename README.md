@@ -35,8 +35,7 @@ fnc.fetch('/resource', function (err, res, fromCache) {
     if (err) return console.error(err);
     console.log({ res: res, fromCache: fromCache });
 
-    // clean up to allow process to exit
-    fnc.stop(); nock.cleanAll();
+    fnc.stop();
   })
 })
 ```
@@ -48,7 +47,7 @@ fnc.fetch('/resource', function (err, res, fromCache) {
 { res: '{"hello":"world"}', fromCache: true }
 ```
 
-#### Output on first run (assuming 10mins didn't pass)
+#### Output on second run (assuming 10mins didn't pass)
 
 ```js
 { res: '{"hello":"world"}', fromCache: true }

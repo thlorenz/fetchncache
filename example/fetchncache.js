@@ -32,7 +32,6 @@ fnc.fetch('/resource', function (err, res, fromCache) {
     if (err) return console.error(err);
     console.log({ res: res, fromCache: fromCache });
 
-    // clean up to allow process to exit
-    fnc.stop(); nock.cleanAll();
+    fnc.stop();
   })
 })
