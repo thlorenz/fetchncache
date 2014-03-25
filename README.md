@@ -30,7 +30,6 @@ var fnc = fetchncache({
 fnc.fetch('/resource', function (err, res, fromCache) {
   if (err) return console.error(err);
   console.log({ res: res, fromCache: fromCache });
-  
 
   fnc.fetch('/resource', function (err, res, fromCache) {
     if (err) return console.error(err);
