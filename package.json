@@ -37,6 +37,6 @@
     "url": "https://github.com/thlorenz/fetchncache/blob/master/LICENSE"
   },
   "engine": {
-    "node": ">=0.6"
+    "node": ">=0.10"
   }
 }

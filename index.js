@@ -13,9 +13,6 @@ function FetchAndCache(opts) {
   var redisOpts = xtend({ port: 6379, host: '127.0.0.1' }, opts.redis)
     , serviceOpts = xtend({ url: 'http://127.0.0.1' }, opts.service)
 
-  // node 0.8 has problems with hiredis
-  if (/^v0\.8/.test(process.version)) redisOpts.parser = redisOpts.parser || 'javascript';
-
   this._defaultExpire = opts.defaultExpire || 15 * 60
   this._serviceOpts   = serviceOpts;
   this._markCached    = opts.markCached !== false;
